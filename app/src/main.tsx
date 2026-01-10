@@ -1,7 +1,9 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
-import WatchCityList from "./components/WatchCityList"
+import { ApolloProvider } from "@apollo/client/react"
+import { apolloClient } from "./apollo-client"
+import WatchCityListContainer from "./components/watch-city-list/WatchCityListContainer"
 
 import "./index.css"
 
@@ -12,12 +14,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/watch-list",
-    element: <WatchCityList />,
+    element: <WatchCityListContainer />,
   },
 ])
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ApolloProvider client={apolloClient}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
   </StrictMode>
 )
