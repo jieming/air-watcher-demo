@@ -1,11 +1,11 @@
 interface WatchCity {
-  id: string
-  name: string
-  filterWear: number
+    id: string
+    name: string
+    filterWear: number
 }
 
 interface WatchCityQuery {
-  watchCities: WatchCity[]
+    watchCities: WatchCity[]
 }
 
 export type { WatchCity, WatchCityQuery }
