@@ -9,3 +9,12 @@ export const GET_WATCH_CITIES = gql`
         }
     }
 `
+export const GET_WATCH_CITY = gql`
+    query GetWatchCity($id: ID!) {
+        watchCities(id: $id) {
+            id
+            name
+            filterWear
+        }
+    }
+`
