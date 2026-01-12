@@ -5,7 +5,7 @@ import { ApolloProvider } from '@apollo/client/react'
 import { apolloClient } from './apollo-client'
 
 import WatchCityListContainer from './components/watch-city-list/WatchCityListContainer'
-import CityDetailsContainer from './components/common/city-details/CityDetailsContainer'
+import CityDetailsContainer from './components/city-details/CityDetailsContainer'
 import RouteNotFound from './components/common/route-not-found/RouteNotFound'
 import './index.css'
 
