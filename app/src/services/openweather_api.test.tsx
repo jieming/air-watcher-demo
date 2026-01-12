@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { fetchGeocoding } from './openweather_api'
+import { fetchGeocoding, fetchAirPolutionData } from './openweather_api'
 
 vi.stubEnv('VITE_OPENWEATHER_API_KEY', 'test-api-key')
 
@@ -123,5 +123,149 @@ describe('fetchGeocoding', () => {
             lat: 51.5085,
             lon: -0.1257,
         })
+    })
+})
+
+describe('fetchAirPolutionData', () => {
+    beforeEach(() => {
+        vi.clearAllMocks()
+    })
+
+    it('should return air pollution data for valid coordinates', async () => {
+        const mockAirPollutionResponse = {
+            coord: [51.5085, -0.1257],
+            list: [
+                {
+                    dt: 1606147200,
+                    main: {
+                        aqi: 4,
+                    },
+                    components: {
+                        co: 203.609,
+                        no: 0.0,
+                        no2: 0.396,
+                        o3: 75.102,
+                        so2: 0.648,
+                        pm2_5: 23.253,
+                        pm10: 92.214,
+                        nh3: 0.117,
+                    },
+                },
+            ],
+        }
+
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => mockAirPollutionResponse,
+        })
+
+        const result = await fetchAirPolutionData(51.5085, -0.1257)
+
+        expect(result).toEqual({
+            aqi: 4,
+            components: {
+                co: 203.609,
+                no: 0.0,
+                no2: 0.396,
+                o3: 75.102,
+                so2: 0.648,
+                pm2_5: 23.253,
+                pm10: 92.214,
+                nh3: 0.117,
+            },
+        })
+
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+            'https://api.openweathermap.org/data/2.5/air_pollution?lat=51.5085&lon=-0.1257&appid=test-api-key'
+        )
+    })
+
+    it('should throw error when API response is not 200', async () => {
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            ok: false,
+            status: 401,
+        })
+
+        await expect(fetchAirPolutionData(51.5085, -0.1257)).rejects.toThrow(
+            'Failed to fetch air pollution data'
+        )
+    })
+
+    it('should throw error when air pollution data list is empty', async () => {
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                coord: [51.5085, -0.1257],
+                list: [],
+            }),
+        })
+
+        await expect(fetchAirPolutionData(51.5085, -0.1257)).rejects.toThrow(
+            'Air pollution data not found'
+        )
+    })
+
+    it('should throw error when air pollution data list is null', async () => {
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({
+                coord: [51.5085, -0.1257],
+                list: null,
+            }),
+        })
+
+        await expect(fetchAirPolutionData(51.5085, -0.1257)).rejects.toThrow(
+            'Air pollution data not found'
+        )
+    })
+
+    it('should use the first result from the list', async () => {
+        const mockAirPollutionResponse = {
+            coord: [51.5085, -0.1257],
+            list: [
+                {
+                    dt: 1606147200,
+                    main: {
+                        aqi: 1,
+                    },
+                    components: {
+                        co: 201.94,
+                        no: 0.018,
+                        no2: 0.771,
+                        o3: 68.664,
+                        so2: 0.64,
+                        pm2_5: 0.5,
+                        pm10: 0.54,
+                        nh3: 0.123,
+                    },
+                },
+                {
+                    dt: 1606147300,
+                    main: {
+                        aqi: 2,
+                    },
+                    components: {
+                        co: 210.0,
+                        no: 0.02,
+                        no2: 0.8,
+                        o3: 70.0,
+                        so2: 0.7,
+                        pm2_5: 1.0,
+                        pm10: 1.0,
+                        nh3: 0.15,
+                    },
+                },
+            ],
+        }
+
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => mockAirPollutionResponse,
+        })
+
+        const result = await fetchAirPolutionData(51.5085, -0.1257)
+
+        expect(result.aqi).toBe(1)
+        expect(result.components.co).toBe(201.94)
     })
 })
