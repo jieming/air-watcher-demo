@@ -3,6 +3,7 @@ import { Outlet, Link } from 'react-router-dom'
 import type { WatchCity } from './watch-list-types'
 import type { CSSProperties } from 'react'
 import type { SxProps, Theme } from '@mui/material/styles'
+import AddCityContainer from './add-city/AddCityContainer'
 
 const styles: Record<string, CSSProperties> = {
     container: {
@@ -15,6 +16,7 @@ const styles: Record<string, CSSProperties> = {
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 0,
+        position: 'relative',
     },
     outletContainer: {
         width: '60%',
@@ -63,6 +65,7 @@ const WatchCityList = ({ cities }: { cities: WatchCity[] }) => {
         <div style={styles.container}>
             <div style={styles.listContainer}>
                 <DataGrid rows={cities} columns={columns} sx={dataGridSx} />
+                <AddCityContainer />
             </div>
             <div style={styles.outletContainer}>
                 <Outlet />
