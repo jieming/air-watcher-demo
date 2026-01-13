@@ -1,8 +1,14 @@
 import { useState } from 'react'
+import { useMutation } from '@apollo/client/react'
 import Fab from '@mui/material/Fab'
 import AddIcon from '@mui/icons-material/Add'
 import AddCityDialog from './AddCityDialog'
+import { CREATE_WATCH_CITY } from '../watch-list-operations'
+import { GET_WATCH_CITIES } from '../watch-list-operations'
+import { useDispatch } from 'react-redux'
+import { showSnackbar } from '../../../store/snackbarSlice'
 import type { CSSProperties } from 'react'
+import type { AppDispatch } from '../../../store/store'
 
 const fabStyles: CSSProperties = {
     position: 'absolute',
@@ -13,6 +19,7 @@ const fabStyles: CSSProperties = {
 }
 
 const AddCityContainer = () => {
+    const dispatch = useDispatch<AppDispatch>()
     const [open, setOpen] = useState(false)
 
     const handleOpen = () => {
@@ -23,10 +30,32 @@ const AddCityContainer = () => {
         setOpen(false)
     }
 
-    const handleSubmit = (cityName: string) => {
-        // TODO: Add city operation will be implemented later
-        console.log('City name:', cityName)
-        handleClose()
+    const [createWatchCity] = useMutation(CREATE_WATCH_CITY, {
+        refetchQueries: [{ query: GET_WATCH_CITIES }],
+        awaitRefetchQueries: true,
+    })
+
+    const handleSubmit = async (cityName: string) => {
+        try {
+            await createWatchCity({
+                variables: {
+                    name: cityName.trim(),
+                    filterWear: 0,
+                },
+            })
+            handleClose()
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to add city to watch list'
+            dispatch(
+                showSnackbar({
+                    message: errorMessage,
+                    severity: 'error',
+                })
+            )
+        }
     }
 
     return (

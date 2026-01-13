@@ -3,6 +3,10 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import WatchCityList from './WatchCityList'
 import type { WatchCity } from './watch-list-types'
 
+vi.mock('./add-city/AddCityContainer', () => ({
+    default: () => <div data-testid="add-city-container">AddCityContainer</div>,
+}))
+
 describe('WatchCityList', () => {
     it('should render DataGrid with column headers', () => {
         render(
@@ -146,5 +150,14 @@ describe('WatchCityList', () => {
         expect(screen.getByText('London')).toBeInTheDocument()
         expect(screen.getByTestId('outlet-content')).toBeInTheDocument()
         expect(screen.getByText('Outlet Content')).toBeInTheDocument()
+    })
+
+    it('should render AddCityContainer', () => {
+        render(
+            <MemoryRouter>
+                <WatchCityList cities={[]} />
+            </MemoryRouter>
+        )
+        expect(screen.getByTestId('add-city-container')).toBeInTheDocument()
     })
 })

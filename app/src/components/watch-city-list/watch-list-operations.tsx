@@ -18,3 +18,13 @@ export const GET_WATCH_CITY = gql`
         }
     }
 `
+
+export const CREATE_WATCH_CITY = gql`
+    mutation CreateWatchCity($name: String!, $filterWear: Int!) {
+        createWatchCity(name: $name, filterWear: $filterWear) {
+            id
+            name
+            filterWear
+        }
+    }
+`

@@ -1,14 +1,45 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
 import AddCityContainer from './AddCityContainer'
+import snackbarReducer from '../../../store/snackbarSlice'
+
+vi.mock('@apollo/client/react', () => ({
+    useMutation: vi.fn(),
+}))
+
+const createTestStore = () => {
+    return configureStore({
+        reducer: {
+            snackbar: snackbarReducer,
+        },
+    })
+}
+
+const renderWithProviders = (component: React.ReactElement) => {
+    const store = createTestStore()
+    return render(<Provider store={store}>{component}</Provider>)
+}
+
+const setupUseMutation = async (mockMutate?: any): Promise<void> => {
+    const { useMutation } = await import('@apollo/client/react')
+    const mutate = mockMutate || vi.fn().mockResolvedValue({})
+    vi.mocked(useMutation).mockReturnValue([
+        mutate,
+        { loading: false, error: undefined },
+    ] as any)
+}
 
 describe('AddCityContainer', () => {
     beforeEach(() => {
         vi.clearAllMocks()
     })
 
-    it('should render FAB button', () => {
-        render(<AddCityContainer />)
+    it('should render FAB button', async () => {
+        await setupUseMutation()
+
+        renderWithProviders(<AddCityContainer />)
 
         const fabButton = screen.getByRole('button', { name: 'add' })
         expect(fabButton).toBeInTheDocument()
@@ -16,7 +47,9 @@ describe('AddCityContainer', () => {
 
     it('should open dialog when FAB button is clicked', async () => {
         const user = userEvent.setup()
-        render(<AddCityContainer />)
+        await setupUseMutation()
+
+        renderWithProviders(<AddCityContainer />)
 
         const fabButton = screen.getByRole('button', { name: 'add' })
         await user.click(fabButton)
@@ -26,7 +59,9 @@ describe('AddCityContainer', () => {
 
     it('should close dialog when Cancel is clicked', async () => {
         const user = userEvent.setup()
-        render(<AddCityContainer />)
+        await setupUseMutation()
+
+        renderWithProviders(<AddCityContainer />)
 
         const fabButton = screen.getByRole('button', { name: 'add' })
         await user.click(fabButton)
@@ -41,10 +76,12 @@ describe('AddCityContainer', () => {
         })
     })
 
-    it('should close dialog and log city name when Add is clicked', async () => {
+    it('should close dialog and call mutation when Add is clicked', async () => {
         const user = userEvent.setup()
-        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-        render(<AddCityContainer />)
+        const mockMutate = vi.fn().mockResolvedValue({})
+        await setupUseMutation(mockMutate)
+
+        renderWithProviders(<AddCityContainer />)
 
         const fabButton = screen.getByRole('button', { name: 'add' })
         await user.click(fabButton)
@@ -55,15 +92,24 @@ describe('AddCityContainer', () => {
         const addButton = screen.getByRole('button', { name: 'Add' })
         await user.click(addButton)
 
-        expect(consoleSpy).toHaveBeenCalledWith('City name:', 'Tokyo')
+        expect(mockMutate).toHaveBeenCalledWith({
+            variables: {
+                name: 'Tokyo',
+                filterWear: 0,
+            },
+        })
 
-        consoleSpy.mockRestore()
+        await waitFor(() => {
+            expect(screen.queryByText('Add City')).not.toBeInTheDocument()
+        })
     })
 
     it('should submit city when Enter key is pressed', async () => {
         const user = userEvent.setup()
-        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-        render(<AddCityContainer />)
+        const mockMutate = vi.fn().mockResolvedValue({})
+        await setupUseMutation(mockMutate)
+
+        renderWithProviders(<AddCityContainer />)
 
         const fabButton = screen.getByRole('button', { name: 'add' })
         await user.click(fabButton)
@@ -72,8 +118,15 @@ describe('AddCityContainer', () => {
         await user.type(input, 'Sydney')
         await user.keyboard('{Enter}')
 
-        expect(consoleSpy).toHaveBeenCalledWith('City name:', 'Sydney')
+        expect(mockMutate).toHaveBeenCalledWith({
+            variables: {
+                name: 'Sydney',
+                filterWear: 0,
+            },
+        })
 
-        consoleSpy.mockRestore()
+        await waitFor(() => {
+            expect(screen.queryByText('Add City')).not.toBeInTheDocument()
+        })
     })
 })
