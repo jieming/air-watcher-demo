@@ -7,6 +7,7 @@ import { CREATE_WATCH_CITY } from '../watch-list-operations'
 import { GET_WATCH_CITIES } from '../watch-list-operations'
 import { useDispatch } from 'react-redux'
 import { showSnackbar } from '../../../store/snackbarSlice'
+import { fetchGeocoding } from '../../../services/openweather_api'
 import type { CSSProperties } from 'react'
 import type { AppDispatch } from '../../../store/store'
 
@@ -36,6 +37,23 @@ const AddCityContainer = () => {
     })
 
     const handleSubmit = async (cityName: string) => {
+        try {
+            // Validate city coordinates before creating the city
+            await fetchGeocoding(cityName.trim())
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to find coordinates for the city'
+            dispatch(
+                showSnackbar({
+                    message: errorMessage,
+                    severity: 'error',
+                })
+            )
+            return
+        }
+
         try {
             await createWatchCity({
                 variables: {

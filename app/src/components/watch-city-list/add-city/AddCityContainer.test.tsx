@@ -9,6 +9,10 @@ vi.mock('@apollo/client/react', () => ({
     useMutation: vi.fn(),
 }))
 
+vi.mock('../../../services/openweather_api', () => ({
+    fetchGeocoding: vi.fn(),
+}))
+
 const createTestStore = () => {
     return configureStore({
         reducer: {
@@ -32,8 +36,14 @@ const setupUseMutation = async (mockMutate?: any): Promise<void> => {
 }
 
 describe('AddCityContainer', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         vi.clearAllMocks()
+        const { fetchGeocoding } =
+            await import('../../../services/openweather_api')
+        vi.mocked(fetchGeocoding).mockResolvedValue({
+            lat: 51.5085,
+            lon: -0.1257,
+        })
     })
 
     it('should render FAB button', async () => {
@@ -128,5 +138,40 @@ describe('AddCityContainer', () => {
         await waitFor(() => {
             expect(screen.queryByText('Add City')).not.toBeInTheDocument()
         })
+    })
+
+    it('should show error notification and not call mutation when geocoding fails', async () => {
+        const user = userEvent.setup()
+        const { fetchGeocoding } =
+            await import('../../../services/openweather_api')
+        vi.mocked(fetchGeocoding).mockRejectedValue(
+            new Error('Location not found')
+        )
+        const mockMutate = vi.fn().mockResolvedValue({})
+        await setupUseMutation(mockMutate)
+
+        const store = createTestStore()
+        render(
+            <Provider store={store}>
+                <AddCityContainer />
+            </Provider>
+        )
+
+        const fabButton = screen.getByRole('button', { name: 'add' })
+        await user.click(fabButton)
+
+        const input = screen.getByLabelText('City Name')
+        await user.type(input, 'InvalidCity')
+
+        const addButton = screen.getByRole('button', { name: 'Add' })
+        await user.click(addButton)
+
+        expect(mockMutate).not.toHaveBeenCalled()
+        expect(screen.getByText('Add City')).toBeInTheDocument()
+
+        const state = store.getState()
+        expect(state.snackbar.open).toBe(true)
+        expect(state.snackbar.message).toBe('Location not found')
+        expect(state.snackbar.severity).toBe('error')
     })
 })
