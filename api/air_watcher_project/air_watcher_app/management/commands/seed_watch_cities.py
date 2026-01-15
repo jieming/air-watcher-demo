@@ -4,7 +4,7 @@ from air_watcher_app.models import WatchCity
 
 
 class Command(BaseCommand):
-    help = "Creates 10 watch cities with random filter_wear values (0-500)"
+    help = "Creates 10 watch cities with random filter_wear values (0-120)"
 
     def handle(self, *args, **options):
         cities = [
@@ -13,16 +13,20 @@ class Command(BaseCommand):
             "Berlin",
             "Madrid",
             "Rome",
-            "Amsterdam",
-            "Barcelona",
+            "Beijing",
+            "Shanghai",
             "Vienna",
-            "Manchester",
+            "Sydney",
             "Edinburgh",
         ]
 
         created_count = 0
-        for city_name in cities:
-            filter_wear = random.randint(0, 500)
+        for index, city_name in enumerate(cities):
+            # Ensure first city has filter_wear > 100
+            if index == 0:
+                filter_wear = random.randint(101, 120)
+            else:
+                filter_wear = random.randint(0, 120)
             watch_city, created = WatchCity.objects.get_or_create(
                 name=city_name, defaults={"filter_wear": filter_wear}
             )

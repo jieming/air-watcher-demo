@@ -90,6 +90,8 @@ describe('AddCityContainer', () => {
         const user = userEvent.setup()
         const mockMutate = vi.fn().mockResolvedValue({})
         await setupUseMutation(mockMutate)
+        const { fetchGeocoding } =
+            await import('../../../services/openweather_api')
 
         renderWithProviders(<AddCityContainer />)
 
@@ -102,6 +104,8 @@ describe('AddCityContainer', () => {
         const addButton = screen.getByRole('button', { name: 'Add' })
         await user.click(addButton)
 
+        expect(fetchGeocoding).toHaveBeenCalledWith('Tokyo')
+        expect(fetchGeocoding).toHaveBeenCalledBefore(mockMutate as any)
         expect(mockMutate).toHaveBeenCalledWith({
             variables: {
                 name: 'Tokyo',
@@ -118,6 +122,8 @@ describe('AddCityContainer', () => {
         const user = userEvent.setup()
         const mockMutate = vi.fn().mockResolvedValue({})
         await setupUseMutation(mockMutate)
+        const { fetchGeocoding } =
+            await import('../../../services/openweather_api')
 
         renderWithProviders(<AddCityContainer />)
 
@@ -128,6 +134,8 @@ describe('AddCityContainer', () => {
         await user.type(input, 'Sydney')
         await user.keyboard('{Enter}')
 
+        expect(fetchGeocoding).toHaveBeenCalledWith('Sydney')
+        expect(fetchGeocoding).toHaveBeenCalledBefore(mockMutate as any)
         expect(mockMutate).toHaveBeenCalledWith({
             variables: {
                 name: 'Sydney',

@@ -31,7 +31,7 @@ describe('WatchCityList', () => {
 
     it('should render a single city in DataGrid', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 100 },
+            { id: '1', name: 'London', filterWear: 20 },
         ]
         render(
             <MemoryRouter>
@@ -42,7 +42,9 @@ describe('WatchCityList', () => {
         expect(screen.getByText('London')).toBeInTheDocument()
         const filterWearCell = screen.getByTestId('filter-wear-cell-1')
         expect(filterWearCell).toBeInTheDocument()
-        expect(filterWearCell).toHaveTextContent('100')
+        const progressBar = filterWearCell.querySelector('[role="progressbar"]')
+        expect(progressBar).toBeInTheDocument()
+        expect(progressBar).toHaveAttribute('aria-valuenow', '80')
     })
 
     it('should render city name as a Link with correct href', () => {
@@ -63,9 +65,9 @@ describe('WatchCityList', () => {
 
     it('should render multiple cities in DataGrid', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 100 },
-            { id: '2', name: 'Paris', filterWear: 250 },
-            { id: '3', name: 'Berlin', filterWear: 50 },
+            { id: '1', name: 'London', filterWear: 20 },
+            { id: '2', name: 'Paris', filterWear: 50 },
+            { id: '3', name: 'Berlin', filterWear: 80 },
             { id: '4', name: 'Madrid', filterWear: 0 },
         ]
         render(
@@ -93,25 +95,29 @@ describe('WatchCityList', () => {
 
         const filterWear1 = screen.getByTestId('filter-wear-cell-1')
         expect(filterWear1).toBeInTheDocument()
-        expect(filterWear1).toHaveTextContent('100')
+        const progressBar1 = filterWear1.querySelector('[role="progressbar"]')
+        expect(progressBar1).toHaveAttribute('aria-valuenow', '80')
 
         const filterWear2 = screen.getByTestId('filter-wear-cell-2')
         expect(filterWear2).toBeInTheDocument()
-        expect(filterWear2).toHaveTextContent('250')
+        const progressBar2 = filterWear2.querySelector('[role="progressbar"]')
+        expect(progressBar2).toHaveAttribute('aria-valuenow', '50')
 
         const filterWear3 = screen.getByTestId('filter-wear-cell-3')
         expect(filterWear3).toBeInTheDocument()
-        expect(filterWear3).toHaveTextContent('50')
+        const progressBar3 = filterWear3.querySelector('[role="progressbar"]')
+        expect(progressBar3).toHaveAttribute('aria-valuenow', '20')
 
         const filterWear4 = screen.getByTestId('filter-wear-cell-4')
         expect(filterWear4).toBeInTheDocument()
-        expect(filterWear4).toHaveTextContent('0')
+        const progressBar4 = filterWear4.querySelector('[role="progressbar"]')
+        expect(progressBar4).toHaveAttribute('aria-valuenow', '100')
     })
 
     it('should render multiple city names as Links with correct hrefs', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 100 },
-            { id: '2', name: 'Paris', filterWear: 250 },
+            { id: '1', name: 'London', filterWear: 20 },
+            { id: '2', name: 'Paris', filterWear: 50 },
         ]
         render(
             <MemoryRouter>
@@ -128,7 +134,7 @@ describe('WatchCityList', () => {
 
     it('should render Outlet with child route content', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 100 },
+            { id: '1', name: 'London', filterWear: 20 },
         ]
         const TestChild = () => (
             <div data-testid="outlet-content">Outlet Content</div>

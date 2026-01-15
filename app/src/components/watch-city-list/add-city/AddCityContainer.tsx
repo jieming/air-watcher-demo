@@ -13,7 +13,7 @@ import type { AppDispatch } from '../../../store/store'
 
 const fabStyles: CSSProperties = {
     position: 'absolute',
-    bottom: '30px',
+    bottom: '40px',
     left: '50%',
     transform: 'translateX(-50%)',
     zIndex: 1000,
