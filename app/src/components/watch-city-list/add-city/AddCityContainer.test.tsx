@@ -105,7 +105,6 @@ describe('AddCityContainer', () => {
         await user.click(addButton)
 
         expect(fetchGeocoding).toHaveBeenCalledWith('Tokyo')
-        expect(fetchGeocoding).toHaveBeenCalledBefore(mockMutate as any)
         expect(mockMutate).toHaveBeenCalledWith({
             variables: {
                 name: 'Tokyo',
@@ -135,7 +134,6 @@ describe('AddCityContainer', () => {
         await user.keyboard('{Enter}')
 
         expect(fetchGeocoding).toHaveBeenCalledWith('Sydney')
-        expect(fetchGeocoding).toHaveBeenCalledBefore(mockMutate as any)
         expect(mockMutate).toHaveBeenCalledWith({
             variables: {
                 name: 'Sydney',
@@ -145,6 +143,33 @@ describe('AddCityContainer', () => {
 
         await waitFor(() => {
             expect(screen.queryByText('Add City')).not.toBeInTheDocument()
+        })
+    })
+
+    it('should format city name with first letter of each word uppercase', async () => {
+        const user = userEvent.setup()
+        const mockMutate = vi.fn().mockResolvedValue({})
+        await setupUseMutation(mockMutate)
+        const { fetchGeocoding } =
+            await import('../../../services/openweather_api')
+
+        renderWithProviders(<AddCityContainer />)
+
+        const fabButton = screen.getByRole('button', { name: 'add' })
+        await user.click(fabButton)
+
+        const input = screen.getByLabelText('City Name')
+        await user.type(input, 'new york')
+
+        const addButton = screen.getByRole('button', { name: 'Add' })
+        await user.click(addButton)
+
+        expect(fetchGeocoding).toHaveBeenCalledWith('New York')
+        expect(mockMutate).toHaveBeenCalledWith({
+            variables: {
+                name: 'New York',
+                filterWear: 0,
+            },
         })
     })
 

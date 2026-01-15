@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from ..models import WatchCity
 
 
@@ -25,3 +26,8 @@ class WatchCityModelTest(TestCase):
         watch_city = WatchCity(name=name_51_chars)
         with self.assertRaises(ValidationError):
             watch_city.full_clean()
+
+    def test_watch_city_name_unique_constraint(self):
+        WatchCity.objects.create(name="Paris", filter_wear=10)
+        with self.assertRaises(IntegrityError):
+            WatchCity.objects.create(name="Paris", filter_wear=20)

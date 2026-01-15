@@ -19,6 +19,14 @@ const fabStyles: CSSProperties = {
     zIndex: 1000,
 }
 
+const formatCityName = (name: string): string => {
+    return name
+        .trim()
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ')
+}
+
 const AddCityContainer = () => {
     const dispatch = useDispatch<AppDispatch>()
     const [open, setOpen] = useState(false)
@@ -37,9 +45,11 @@ const AddCityContainer = () => {
     })
 
     const handleSubmit = async (cityName: string) => {
+        const formattedCityName = formatCityName(cityName)
+
         try {
             // Validate city coordinates before creating the city
-            await fetchGeocoding(cityName.trim())
+            await fetchGeocoding(formattedCityName)
         } catch (error) {
             const errorMessage =
                 error instanceof Error
@@ -57,7 +67,7 @@ const AddCityContainer = () => {
         try {
             await createWatchCity({
                 variables: {
-                    name: cityName.trim(),
+                    name: formattedCityName,
                     filterWear: 0,
                 },
             })

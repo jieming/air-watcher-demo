@@ -208,4 +208,38 @@ describe('AddCityDialog', () => {
 
         expect(mockHandleSubmit).toHaveBeenCalledWith('  Madrid  ')
     })
+
+    it('should limit input to 50 characters', async () => {
+        const user = userEvent.setup()
+        render(
+            <AddCityDialog
+                open={true}
+                handleClose={mockHandleClose}
+                handleSubmit={mockHandleSubmit}
+            />
+        )
+
+        const input = screen.getByLabelText('City Name') as HTMLInputElement
+        const longName = 'a'.repeat(60)
+        await user.type(input, longName)
+
+        expect(input.value).toHaveLength(50)
+    })
+
+    it('should show character count at 50 characters', async () => {
+        const user = userEvent.setup()
+        render(
+            <AddCityDialog
+                open={true}
+                handleClose={mockHandleClose}
+                handleSubmit={mockHandleSubmit}
+            />
+        )
+
+        const input = screen.getByLabelText('City Name')
+        const longName = 'a'.repeat(50)
+        await user.type(input, longName)
+
+        expect(screen.getByText('50/50')).toBeInTheDocument()
+    })
 })

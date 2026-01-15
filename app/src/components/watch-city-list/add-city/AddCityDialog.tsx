@@ -16,12 +16,32 @@ const AddCityDialog = ({
     handleSubmit: (cityName: string) => void
 }) => {
     const [cityName, setCityName] = useState('')
+    const MAX_LENGTH = 50
 
     useEffect(() => {
         if (!open) {
             setCityName('')
         }
     }, [open])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        if (value.length <= MAX_LENGTH) {
+            setCityName(value)
+        }
+    }
+
+    const handleSubmitClick = () => {
+        if (cityName.trim()) {
+            handleSubmit(cityName)
+        }
+    }
+
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && cityName.trim()) {
+            handleSubmit(cityName)
+        }
+    }
 
     return (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
@@ -36,18 +56,15 @@ const AddCityDialog = ({
                     variant="outlined"
                     placeholder="The newly created city will start with 0 filter wear."
                     value={cityName}
-                    onChange={e => setCityName(e.target.value)}
-                    onKeyDown={e => {
-                        if (e.key === 'Enter' && cityName.trim()) {
-                            handleSubmit(cityName)
-                        }
-                    }}
+                    onChange={handleChange}
+                    onKeyDown={handleEnterKey}
+                    helperText={`${cityName.length}/${MAX_LENGTH}`}
                 />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button
-                    onClick={() => handleSubmit(cityName)}
+                    onClick={handleSubmitClick}
                     variant="contained"
                     disabled={!cityName.trim()}
                 >
