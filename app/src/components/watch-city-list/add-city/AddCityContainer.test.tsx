@@ -109,6 +109,8 @@ describe('AddCityContainer', () => {
             variables: {
                 name: 'Tokyo',
                 filterWear: 0,
+                lat: 51.5085,
+                lon: -0.1257,
             },
         })
 
@@ -138,6 +140,8 @@ describe('AddCityContainer', () => {
             variables: {
                 name: 'Sydney',
                 filterWear: 0,
+                lat: 51.5085,
+                lon: -0.1257,
             },
         })
 
@@ -169,6 +173,8 @@ describe('AddCityContainer', () => {
             variables: {
                 name: 'New York',
                 filterWear: 0,
+                lat: 51.5085,
+                lon: -0.1257,
             },
         })
     })

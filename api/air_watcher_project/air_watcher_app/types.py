@@ -8,3 +8,5 @@ class WatchCityType:
     id: strawberry.ID
     name: str
     filter_wear: int
+    lat: float
+    lon: float

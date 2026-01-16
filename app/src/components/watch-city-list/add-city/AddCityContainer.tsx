@@ -47,9 +47,9 @@ const AddCityContainer = () => {
     const handleSubmit = async (cityName: string) => {
         const formattedCityName = formatCityName(cityName)
 
+        let coordinates
         try {
-            // Validate city coordinates before creating the city
-            await fetchGeocoding(formattedCityName)
+            coordinates = await fetchGeocoding(formattedCityName)
         } catch (error) {
             const errorMessage =
                 error instanceof Error
@@ -69,6 +69,8 @@ const AddCityContainer = () => {
                 variables: {
                     name: formattedCityName,
                     filterWear: 0,
+                    lat: coordinates.lat,
+                    lon: coordinates.lon,
                 },
             })
             handleClose()

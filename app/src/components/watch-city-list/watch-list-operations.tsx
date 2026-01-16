@@ -6,6 +6,8 @@ export const GET_WATCH_CITIES = gql`
             id
             name
             filterWear
+            lat
+            lon
         }
     }
 `
@@ -15,16 +17,20 @@ export const GET_WATCH_CITY = gql`
             id
             name
             filterWear
+            lat
+            lon
         }
     }
 `
 
 export const CREATE_WATCH_CITY = gql`
-    mutation CreateWatchCity($name: String!, $filterWear: Int!) {
-        createWatchCity(name: $name, filterWear: $filterWear) {
+    mutation CreateWatchCity($name: String!, $filterWear: Int!, $lat: Float!, $lon: Float!) {
+        createWatchCity(name: $name, filterWear: $filterWear, lat: $lat, lon: $lon) {
             id
             name
             filterWear
+            lat
+            lon
         }
     }
 `
