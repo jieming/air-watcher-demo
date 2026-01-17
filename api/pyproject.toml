@@ -9,6 +9,9 @@ dependencies = [
     "strawberry-graphql-django>=0.73.1",
     "black>=24.0.0",
     "django-cors-headers>=4.0.0",
+    "requests>=2.32.0",
+    "apscheduler>=3.11.2",
+    "python-dotenv>=1.0.0",
 ]
 
 [tool.black]

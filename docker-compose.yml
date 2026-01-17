@@ -6,6 +6,8 @@ services:
     container_name: air_watcher_backend
     ports:
       - "8000:8000"
+    env_file:
+      - ./.env
     volumes:
       - ./api:/app
     environment:
@@ -27,6 +29,8 @@ services:
     container_name: air_watcher_frontend
     ports:
       - "5173:5173"
+    env_file:
+      - ./.env
     volumes:
       - ./app/src:/app/src
       - ./app/public:/app/public

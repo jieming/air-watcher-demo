@@ -48,8 +48,8 @@ describe('WatchCityListContainer', () => {
     it('should render WatchCityList with cities data', () => {
         const mockData: WatchCityQuery = {
             watchCities: [
-                { id: '1', name: 'London', filterWear: 100 },
-                { id: '2', name: 'Paris', filterWear: 250 },
+                { id: '1', name: 'London', filterWear: 100, lat: 51.5074, lon: -0.1278 },
+                { id: '2', name: 'Paris', filterWear: 250, lat: 48.8566, lon: 2.3522 },
             ],
         }
 
@@ -74,5 +74,22 @@ describe('WatchCityListContainer', () => {
         render(<WatchCityListContainer />)
         expect(screen.getByTestId('watch-city-list')).toBeInTheDocument()
         expect(screen.getByText('Cities: 0')).toBeInTheDocument()
+    })
+
+    it('should configure useQuery with polling options', () => {
+        vi.mocked(useQuery).mockReturnValue({
+            loading: false,
+            error: undefined,
+            data: { watchCities: [] },
+        } as any)
+
+        render(<WatchCityListContainer />)
+
+        expect(useQuery).toHaveBeenCalledWith(
+            expect.any(Object),
+            expect.objectContaining({
+                pollInterval: 60000,
+            })
+        )
     })
 })

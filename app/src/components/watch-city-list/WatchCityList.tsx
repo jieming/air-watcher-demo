@@ -140,7 +140,7 @@ const columns: GridColDef[] = [
 
 const WatchCityList = ({ cities }: { cities: WatchCity[] }) => {
     const location = useLocation()
-    const hasCitySelected = location.pathname !== '/watch-list/'
+    const hasCitySelected = location.pathname !== '/watch-list'
 
     return (
         <div style={styles.container}>

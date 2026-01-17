@@ -6,7 +6,9 @@ import WatchCityList from './WatchCityList'
 import LoadingIndicator from '../common/loading-indicator/LoadingIndicator'
 
 const WatchCityListContainer = () => {
-    const { loading, error, data } = useQuery<WatchCityQuery>(GET_WATCH_CITIES)
+    const { loading, error, data } = useQuery<WatchCityQuery>(GET_WATCH_CITIES, {
+        pollInterval: 60000,
+    })
 
     if (loading) {
         return <LoadingIndicator />

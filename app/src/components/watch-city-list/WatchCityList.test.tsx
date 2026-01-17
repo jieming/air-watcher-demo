@@ -31,7 +31,7 @@ describe('WatchCityList', () => {
 
     it('should render a single city in DataGrid', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 20 },
+            { id: '1', name: 'London', filterWear: 20, lat: 51.5074, lon: -0.1278 },
         ]
         render(
             <MemoryRouter>
@@ -49,7 +49,7 @@ describe('WatchCityList', () => {
 
     it('should render city name as a Link with correct href', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 100 },
+            { id: '1', name: 'London', filterWear: 100, lat: 51.5074, lon: -0.1278 },
         ]
         render(
             <MemoryRouter>
@@ -65,10 +65,10 @@ describe('WatchCityList', () => {
 
     it('should render multiple cities in DataGrid', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 20 },
-            { id: '2', name: 'Paris', filterWear: 50 },
-            { id: '3', name: 'Berlin', filterWear: 80 },
-            { id: '4', name: 'Madrid', filterWear: 0 },
+            { id: '1', name: 'London', filterWear: 20, lat: 51.5074, lon: -0.1278 },
+            { id: '2', name: 'Paris', filterWear: 50, lat: 48.8566, lon: 2.3522 },
+            { id: '3', name: 'Berlin', filterWear: 80, lat: 52.5200, lon: 13.4050 },
+            { id: '4', name: 'Madrid', filterWear: 0, lat: 40.4168, lon: -3.7038 },
         ]
         render(
             <MemoryRouter>
@@ -116,8 +116,8 @@ describe('WatchCityList', () => {
 
     it('should render multiple city names as Links with correct hrefs', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 20 },
-            { id: '2', name: 'Paris', filterWear: 50 },
+            { id: '1', name: 'London', filterWear: 20, lat: 51.5074, lon: -0.1278 },
+            { id: '2', name: 'Paris', filterWear: 50, lat: 48.8566, lon: 2.3522 },
         ]
         render(
             <MemoryRouter>
@@ -134,7 +134,7 @@ describe('WatchCityList', () => {
 
     it('should render Outlet with child route content', () => {
         const cities: WatchCity[] = [
-            { id: '1', name: 'London', filterWear: 20 },
+            { id: '1', name: 'London', filterWear: 20, lat: 51.5074, lon: -0.1278 },
         ]
         const TestChild = () => (
             <div data-testid="outlet-content">Outlet Content</div>
