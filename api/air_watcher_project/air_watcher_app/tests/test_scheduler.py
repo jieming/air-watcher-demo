@@ -41,11 +41,11 @@ class SchedulerTest(TestCase):
         add_job_call = mock_scheduler.add_job.call_args
 
         self.assertEqual(add_job_call[0][0].__name__, "call_command")
-        self.assertEqual(add_job_call[0][1], "interval")
+        self.assertEqual(add_job_call[0][1], "cron")
         self.assertEqual(add_job_call[1]["args"], ["update_filter_wear"])
         self.assertEqual(add_job_call[1]["id"], "update_filter_wear_hourly")
         self.assertTrue(add_job_call[1]["replace_existing"])
-        self.assertEqual(add_job_call[1]["hours"], 1)
+        self.assertEqual(add_job_call[1]["minute"], 0)
 
     @patch("air_watcher_app.scheduler.BackgroundScheduler")
     def test_start_scheduler_does_not_start_twice(self, mock_scheduler_class):

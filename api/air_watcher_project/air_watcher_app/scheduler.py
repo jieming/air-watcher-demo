@@ -12,11 +12,11 @@ def start_scheduler() -> None:
     scheduler = BackgroundScheduler(timezone="UTC")
     scheduler.add_job(
         call_command,
-        "interval",
+        "cron",
         args=["update_filter_wear"],
         id="update_filter_wear_hourly",
         replace_existing=True,
-        hours=1,
+        minute=0,
     )
     scheduler.start()
     _scheduler = scheduler
