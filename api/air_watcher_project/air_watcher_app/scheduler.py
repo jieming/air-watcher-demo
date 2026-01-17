@@ -16,8 +16,7 @@ def start_scheduler() -> None:
         args=["update_filter_wear"],
         id="update_filter_wear_hourly",
         replace_existing=True,
-        minutes=1,
-        # hours=1,
+        hours=1,
     )
     scheduler.start()
     _scheduler = scheduler
